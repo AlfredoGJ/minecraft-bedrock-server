@@ -1,0 +1,123 @@
+services:
+  bds:
+    image: itzg/minecraft-bedrock-server:latest
+    container_name: minecraft-bedrock
+    restart: unless-stopped
+
+    environment:
+      # Required
+      EULA: "TRUE"
+
+      # Container options
+      VERSION: "LATEST" # LATEST, PREVIEW, EXISTING, or an exact version
+      # PREVIEW: "true" # Needed for an exact preview version
+      # UID: "1000"
+      # GID: "1000"
+      # TZ: "Etc/UTC"
+      # PACKAGE_BACKUP_KEEP: "2"
+      # DIRECT_DOWNLOAD_URL: "https://example.invalid/bedrock-server.zip"
+      # DOWNLOAD_PROGRESS: "true"
+      # ENABLE_SSH: "true" # SSH console on port 2222
+      # ENABLE_BDS_V6BIND_FIX: "true" # Required when IPv4/IPv6 use one port
+      # MC_PACK: "/data/packs/my-world.mcworld"
+      # FORCE_WORLD_COPY: "true"
+      # FORCE_PACK_COPY: "true"
+      # STOP_SERVER_ANNOUNCE_DELAY: "30"
+      # STOP_SERVER_ANNOUNCE: "say Server shutting down in %delay% seconds"
+
+      # Server properties
+      # SERVER_NAME: "Dedicated Bedrock Server"
+      GAMEMODE: "creative" # survival, creative, adventure
+      # FORCE_GAMEMODE: "false"
+      # DIFFICULTY: "normal" # peaceful, easy, normal, hard
+      # ALLOW_CHEATS: "false"
+      # MAX_PLAYERS: "10"
+      # ONLINE_MODE: "true"
+      # WHITE_LIST: "false" # Deprecated; use ALLOW_LIST instead
+      ALLOW_LIST: "false"
+      # SERVER_PORT: "19132"
+      # SERVER_PORT_V6: "19133"
+      # ENABLE_LAN_VISIBILITY: "true"
+      # VIEW_DISTANCE: "32"
+      # TICK_DISTANCE: "4"
+      # PLAYER_IDLE_TIMEOUT: "30"
+      # MAX_THREADS: "8"
+      # LEVEL_NAME: "Bedrock level"
+      # LEVEL_SEED: ""
+      # LEVEL_TYPE: "DEFAULT" # DEFAULT, FLAT, LEGACY
+      # DEFAULT_PLAYER_PERMISSION_LEVEL: "member" # visitor, member, operator
+      # TEXTUREPACK_REQUIRED: "false"
+      # CONTENT_LOG_FILE_ENABLED: "false"
+      # CONTENT_LOG_LEVEL: "info" # verbose, info, warning, error
+      # CONTENT_LOG_CONSOLE_OUTPUT_ENABLED: "true"
+      # COMPRESSION_THRESHOLD: "1"
+      # COMPRESSION_ALGORITHM: "zlib" # zlib, snappy
+      # SERVER_AUTHORITATIVE_MOVEMENT: "server-auth" # server-auth, client-auth, server-auth-with-rewind
+      # PLAYER_POSITION_ACCEPTANCE_THRESHOLD: "0.5"
+      # PLAYER_MOVEMENT_SCORE_THRESHOLD: "20"
+      # PLAYER_MOVEMENT_ACTION_DIRECTION_THRESHOLD: "0.85"
+      # PLAYER_MOVEMENT_DISTANCE_THRESHOLD: "0.3"
+      # PLAYER_MOVEMENT_DURATION_THRESHOLD_IN_MS: "500"
+      # CORRECT_PLAYER_MOVEMENT: "true"
+      # SERVER_AUTHORITATIVE_BLOCK_BREAKING: "true"
+      # SERVER_AUTHORITATIVE_BLOCK_BREAKING_PICK_RANGE_SCALAR: "1.0"
+      # CHAT_RESTRICTION: "None" # None, Dropped, Disabled
+      # DISABLE_PLAYER_INTERACTION: "false"
+      # CLIENT_SIDE_CHUNK_GENERATION_ENABLED: "true"
+      # BLOCK_NETWORK_IDS_ARE_HASHES: "true"
+      # DISABLE_PERSONA: "false"
+      # DISABLE_CUSTOM_SKINS: "false"
+      # SERVER_BUILD_RADIUS_RATIO: "Disabled"
+      # ALLOW_OUTBOUND_SCRIPT_DEBUGGING: "false"
+      # ALLOW_INBOUND_SCRIPT_DEBUGGING: "false"
+      # FORCE_INBOUND_DEBUG_PORT: "0"
+      # SCRIPT_DEBUGGER_AUTO_ATTACH: "disabled" # disabled, connect, listen
+      # SCRIPT_DEBUGGER_AUTO_ATTACH_CONNECT_ADDRESS: ""
+      # SCRIPT_WATCHDOG_ENABLE: "true"
+      # SCRIPT_WATCHDOG_ENABLE_EXCEPTION_HANDLING: "true"
+      # SCRIPT_WATCHDOG_ENABLE_SHUTDOWN: "true"
+      # SCRIPT_WATCHDOG_HANG_EXCEPTION: "true"
+      # SCRIPT_WATCHDOG_HANG_THRESHOLD: "10000"
+      # SCRIPT_WATCHDOG_SPIKE_THRESHOLD: "100"
+      # SCRIPT_WATCHDOG_SLOW_THRESHOLD: "2"
+      # SCRIPT_WATCHDOG_MEMORY_WARNING: "1000"
+      # SCRIPT_WATCHDOG_MEMORY_LIMIT: "2000"
+      # OP_PERMISSION_LEVEL: "4"
+      # EMIT_SERVER_TELEMETRY: "true"
+      # MSA_GAMERTAGS_ONLY: "false"
+      # ITEM_TRANSACTION_LOGGING_ENABLED: "false"
+
+      # Permissions and allowlist. Values may be comma- or newline-separated.
+      # OPS: |
+      #   PlayerGamertag
+      #   2535453759792258
+      # MEMBERS: |
+      #   PlayerGamertag
+      # VISITORS: |
+      #   PlayerGamertag
+      # ALLOW_LIST_USERS: |
+      #   PlayerGamertag:2535453759792258
+      # RESOLVE_XUID_API_URL: "https://mcprofile.io/api/v1/bedrock/gamertag"
+
+      # Custom Bedrock variables, either key/value lines or JSON.
+      # VARIABLES: |
+      #   var1=customStringValue
+      #   var2=1234
+      #   var3=true
+      # VARIABLES: '{"mobSpawnRate":22,"enableCheats":true}'
+
+    ports:
+      - "19132:19132/udp" # IPv4 Bedrock port
+      - "19133:19133/udp" # IPv6 Bedrock port
+      # - "2222:2222/tcp" # Enable when ENABLE_SSH=true
+
+    volumes:
+      - ./data:/data
+      # - ./packs:/data/packs:ro
+      # - ./allowlist.json:/data/allowlist.json:ro
+
+    stdin_open: true
+    tty: true
+
+    # Give graceful shutdown enough time to save the world.
+    stop_grace_period: 60s
